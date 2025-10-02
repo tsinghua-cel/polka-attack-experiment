@@ -1,0 +1,160 @@
+version: "3.7"
+services:
+  relaychain-alice:
+    #ports:
+    #  - "50021:9944"
+    #  - "30333:30333"
+    volumes:
+      - ./attackdata/relaychain-alice:/data
+    build:
+      context: .
+        #dockerfile: relaychain.Dockerfile
+      dockerfile: alice.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      TAMPERED_TIME_OFFSET: 4
+      RUST_LOG: babe=debug
+      NODEROLE: alice
+    ulimits: &a1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  relaychain-bob:
+    #ports:
+    #  - "50022:9944"
+    #  - "30334:30333"
+    volumes:
+      - ./attackdata/relaychain-bob:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: bob
+    ulimits: *a1
+
+  relaychain-charlie:
+    #ports:
+    #  - "50023:9944"
+    #  - "30335:30333"
+    volumes:
+      - ./attackdata/relaychain-charlie:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: charlie
+    ulimits: *a1
+
+  relaychain-dave:
+    #ports:
+    #  - "50024:9944"
+    #  - "30336:30333"
+    volumes:
+      - ./attackdata/relaychain-dave:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: dave
+    ulimits: *a1
+
+  relaychain-eve:
+    #ports:
+    #  - "50025:9944"
+    #  - "30337:30333"
+    volumes:
+      - ./attackdata/relaychain-eve:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: eve
+    ulimits: *a1
+
+  relaychain-ferdie:
+    #ports:
+    #  - "50026:9944"
+    #  - "30338:30333"
+    volumes:
+      - ./attackdata/relaychain-ferdie:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: ferdie
+    ulimits: *a1
+
+  relaychain-one:
+    #ports:
+    #  - "50027:9944"
+    #  - "30339:30333"
+    volumes:
+      - ./attackdata/relaychain-one:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: one
+    ulimits: *a1
+
+  relaychain-two:
+    #ports:
+    #  - "50028:9944"
+    #  - "30340:30333"
+    volumes:
+      - ./attackdata/relaychain-two:/data
+    build:
+      context: .
+      dockerfile: relaychain.Dockerfile
+    entrypoint: /app/node.sh
+    environment:
+      RUST_LOG: babe=debug
+      NODEROLE: two
+    ulimits: *a1
+
+  tx-sender:
+    image: polka-utils:latest
+    depends_on:
+      - relaychain-alice
+    environment:
+      WS_ENDPOINT: ws://relaychain-alice:9944 
+      SEED: //Alice                   
+      TO: 15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5 
+      TPS: 1                          
+      DURATION: 12000                
+      AMOUNT: "1000000000"       
+    entrypoint: ["/bin/sh", "-c", "./run-sendtx.sh"]
+    restart: unless-stopped
+  delayed-collector:
+    image: polka-utils:latest
+    depends_on:
+      - relaychain-charlie
+    environment:
+      DELAY_SECONDS: 12000
+      WS_ENDPOINT: ws://relaychain-charlie:9944    
+      START_BLOCK: 50                  
+      END_BLOCK: 1800
+      OUTPUT_FORMAT: json             
+      RESULT_DIR: /data/collector     
+      BATCH_SIZE: 100                 
+      SORT_BY: blocks                
+      MIN_BLOCKS: 0                 
+      INCLUDE_EMPTY: "false"       
+      VERBOSE: "false"               
+    volumes:
+      - ./attackdata/collector:/data/collector
+    entrypoint: ["/bin/sh", "-c", "./run-collector.sh"]
+    restart: "no"
