@@ -62,20 +62,23 @@ After installing Docker, follow these steps:
 
 1. Git clone the repository:
 
-   ```bash
-   git clone https://github.com/tsinghua-cel/polka-attack-experiment.git
-   ```
+```bash
+git clone https://github.com/tsinghua-cel/polka-attack-experiment.git
+```
 
 2. Enter the repository directory:
 
-   ```bash
-   cd polka-attack-experiment
-   ```
+```bash
+cd polka-attack-experiment
+```
 
 3. Build the required Docker image in the repository root directory:
-   ```bash
-   ./build.sh
-   ```
+
+```bash
+./build.sh
+```
+
+Then script will cost about 2 hours to build the docker images.
 
 ## Experiments
 
@@ -91,3 +94,5 @@ Then you can stop the experiments with:
 ```bash
 cd testcase/ && ./stop.sh && cd -
 ```
+
+After experiments, the results will be stored in the `collector` directory for each testcase.
