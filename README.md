@@ -1,8 +1,8 @@
-# Polka attack experiment
+# Risk-free Selfish Mining in Hybrid Predictability Model. A Case Study on Polkadot's NPoS
 
 ## Overview
 
-This repository contains the implementation for our paper "xxxxx." The repository includes:
+This repository contains the implementation for our paper "Risk-free Selfish Mining in Hybrid Predictability Model. A Case Study on Polkadot's NPoS" The repository includes:
 
 - Implementation code for attack polka-sdk
 - Modified code for normal polka-sdk v1.16.9
